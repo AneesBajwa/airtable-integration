@@ -1,0 +1,14 @@
+<div class="empty">
+  <div class="empty-card">
+    <span class="empty-icon" aria-hidden="true">
+      <mat-icon>{{ icon() }}</mat-icon>
+    </span>
+    <h2 class="empty-title">{{ title() }}</h2>
+    <p class="empty-message">{{ message() }}</p>
+    @if (actionLabel()) {
+      <button mat-flat-button class="empty-cta" (click)="actionClick.emit()">
+        {{ actionLabel() }}
+      </button>
+    }
+  </div>
+</div>

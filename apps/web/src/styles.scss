@@ -1,0 +1,91 @@
+// Global stylesheet. Material 3 prebuilt theme is loaded via angular.json.
+// All design tokens live in styles/_variables.scss — never hardcode here.
+
+@use './styles/variables' as v;
+
+// ── Root: Material sys-token overrides ─────────────────────────────────
+// AG Grid theming lives in the component (themeQuartz.withParams) — not here.
+:root {
+  --mat-sys-primary: #{v.$accent};
+  --mat-sys-on-primary: #{v.$accent-fg};
+  --mat-sys-primary-container: #{v.$bg-muted};
+  --mat-sys-on-primary-container: #{v.$fg};
+
+  --mat-sys-surface: #{v.$bg};
+  --mat-sys-surface-container: #{v.$bg};
+  --mat-sys-surface-container-low: #{v.$bg};
+  --mat-sys-surface-container-high: #{v.$bg-subtle};
+  --mat-sys-surface-variant: #{v.$bg-subtle};
+  --mat-sys-on-surface: #{v.$fg};
+  --mat-sys-on-surface-variant: #{v.$fg-muted};
+
+  --mat-sys-outline: #{v.$border-strong};
+  --mat-sys-outline-variant: #{v.$border};
+
+  --mat-sys-error: #{v.$danger};
+  --mat-sys-on-error: #ffffff;
+  --mat-sys-error-container: #fef2f2;
+  --mat-sys-on-error-container: #{v.$danger};
+
+  --mat-sys-secondary-container: #{v.$warning-bg};
+  --mat-sys-on-secondary-container: #{v.$warning};
+
+  --mat-snack-bar-button-color: #{v.$accent-fg};
+}
+
+// ── Page chrome ────────────────────────────────────────────────────────
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: v.$font-family-base;
+  font-size: v.$font-size-base;
+  line-height: v.$leading-normal;
+  background: v.$bg;
+  color: v.$fg;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+app-root {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+// ── Accessibility: visible focus ring ──────────────────────────────────
+// Individual elements with their own focus treatment opt out of the global rule.
+:focus-visible {
+  outline: 2px solid v.$accent;
+  outline-offset: 2px;
+}
+
+.app-input:focus-visible,
+.app-btn:focus-visible,
+.mat-mdc-form-field:focus-within :focus-visible,
+.ag-cell:focus-visible,
+.sidebar-item:focus-visible {
+  outline: none;
+}
+
+// ── Shared keyframes (consolidated from per-component duplicates) ──────
+@keyframes pulse {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

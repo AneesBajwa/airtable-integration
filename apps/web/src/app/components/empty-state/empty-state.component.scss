@@ -1,0 +1,66 @@
+@use '../../../styles/variables' as v;
+
+.empty {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: v.$space-12 v.$space-6;
+}
+
+.empty-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 420px;
+  width: 100%;
+}
+
+.empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: v.$space-4;
+  border-radius: v.$radius-pill;
+  background: v.$bg-muted;
+  color: v.$fg-muted; // 7.83:1
+
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.empty-title {
+  margin: 0 0 v.$space-2;
+  font-size: v.$font-size-lg;
+  font-weight: v.$font-weight-semibold;
+  color: v.$fg;
+  letter-spacing: -0.01em;
+}
+
+.empty-message {
+  margin: 0 0 v.$space-5;
+  font-size: v.$font-size-md;
+  line-height: v.$leading-normal;
+  color: v.$fg-muted; // 7.83:1
+}
+
+.empty-cta {
+  --mdc-filled-button-container-color: #{v.$accent};
+  --mdc-filled-button-label-text-color: #{v.$accent-fg};
+  height: 32px;
+  padding: 0 v.$space-4;
+  border-radius: v.$radius-md;
+  font-weight: v.$font-weight-medium;
+  font-size: v.$font-size-sm;
+  letter-spacing: 0;
+
+  &:hover:not([disabled]) {
+    --mdc-filled-button-container-color: #{v.$accent-hover};
+  }
+}

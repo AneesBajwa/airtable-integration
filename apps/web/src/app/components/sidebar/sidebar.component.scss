@@ -1,0 +1,130 @@
+@use '../../../styles/variables' as v;
+
+:host {
+  display: block;
+  min-height: 0;
+  height: 100%;
+}
+
+.app-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: v.$bg-subtle;
+  border-right: 1px solid v.$border;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.sidebar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: v.$space-4 v.$space-4 v.$space-2;
+}
+
+.sidebar-eyebrow {
+  font-size: v.$font-size-xs;
+  font-weight: v.$font-weight-semibold;
+  color: v.$fg-muted; // 7.83:1 — passes AA-large
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.sidebar-count {
+  font-size: v.$font-size-xs;
+  font-variant-numeric: tabular-nums;
+  color: v.$fg-muted;
+  font-weight: v.$font-weight-medium;
+}
+
+.sidebar-empty {
+  margin: 0;
+  padding: v.$space-2 v.$space-4 v.$space-4;
+  font-size: v.$font-size-sm;
+  color: v.$fg-muted;
+}
+
+.sidebar-list {
+  margin: 0;
+  padding: 0 v.$space-2 v.$space-4;
+  list-style: none;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: v.$space-3;
+  width: 100%;
+  padding: 7px v.$space-3;
+  border: 0;
+  border-radius: v.$radius-md;
+  background: transparent;
+  color: v.$fg-muted; // 7.83:1
+  font-family: inherit;
+  font-size: v.$font-size-sm;
+  font-weight: v.$font-weight-regular;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color v.$motion-fast v.$ease-standard,
+    color v.$motion-fast v.$ease-standard,
+    box-shadow v.$motion-fast v.$ease-standard;
+
+  &:hover {
+    background: v.$accent-soft;
+    color: v.$fg;
+  }
+
+  &:focus-visible {
+    box-shadow: v.$ring;
+    color: v.$fg;
+  }
+}
+
+.sidebar-item-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-item-count {
+  font-size: v.$font-size-xs;
+  font-variant-numeric: tabular-nums;
+  color: v.$fg-subtle; // 4.85:1 — passes AA
+  flex-shrink: 0;
+  font-weight: v.$font-weight-medium;
+}
+
+.sidebar-item.is-active {
+  background: v.$accent-soft;
+  color: v.$fg;
+  font-weight: v.$font-weight-medium;
+}
+
+.sidebar-item.is-active .sidebar-item-count {
+  color: v.$fg-muted;
+}
+
+// ── Narrow viewport: slide-in drawer ──────────────────────────────────
+@media (max-width: 900px) {
+  .app-sidebar {
+    position: fixed;
+    inset: v.$header-height 0 0 0;
+    width: v.$sidebar-width;
+    right: auto;
+    transform: translateX(-100%);
+    transition: transform v.$motion-base v.$ease-standard;
+    box-shadow: v.$elev-pop;
+    z-index: 3;
+    background: v.$bg;
+  }
+  .app-sidebar.is-open {
+    transform: translateX(0);
+  }
+}

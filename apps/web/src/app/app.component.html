@@ -1,0 +1,58 @@
+<app-header
+  [connected]="connected()"
+  [syncing]="syncing()"
+  [scraping]="scraping()"
+  [menuOpen]="sidebarOpen()"
+  (syncClick)="onSync()"
+  (scrapeClick)="onScrape()"
+  (connectClick)="onConnect()"
+  (menuToggle)="toggleSidebar()"
+/>
+
+<app-sidebar
+  class="app-shell-sidebar"
+  [collections]="collections()"
+  [entity]="entity()"
+  [open]="sidebarOpen()"
+  (entityChange)="onEntityChange($event)"
+/>
+
+<main class="content">
+  @if (scraperState() === ScraperState.AwaitingMfa) {
+    <app-mfa-prompt
+      [submitting]="mfaSubmitting()"
+      [error]="mfaError()"
+      (codeSubmit)="onMfaSubmit($event)"
+    />
+  }
+
+  @if (!connected()) {
+    <app-empty-state
+      icon="link"
+      title="Connect Airtable to begin"
+      message="You'll be redirected to Airtable to authorize this app. Tokens stay encrypted on the server."
+      actionLabel="Connect Airtable"
+      (actionClick)="onConnect()"
+    />
+  } @else if (!collections().length) {
+    <app-empty-state
+      icon="cloud_sync"
+      title="Run a sync to populate data"
+      message="Pull bases, tables, records, and users from your Airtable workspace into MongoDB."
+      actionLabel="Sync now"
+      (actionClick)="onSync()"
+    />
+  } @else if (!entity()) {
+    <app-empty-state
+      icon="table_chart"
+      title="Pick a collection from the left"
+      message="Choose a synced collection to browse its records."
+    />
+  } @else {
+    <app-data-grid
+      [entity]="entity()"
+      [entityCount]="entityCount()"
+      [reloadKey]="reloadKey()"
+    />
+  }
+</main>

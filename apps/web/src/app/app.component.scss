@@ -1,0 +1,43 @@
+@use './../styles/variables' as v;
+
+:host {
+  display: grid;
+  grid-template-rows: v.$header-height 1fr;
+  grid-template-columns: v.$sidebar-width 1fr;
+  grid-template-areas:
+    'header  header'
+    'sidebar content';
+  flex: 1;
+  min-height: 100vh;
+  background: v.$bg;
+}
+
+app-header         { grid-area: header; }
+.app-shell-sidebar { grid-area: sidebar; min-height: 0; }
+
+.content {
+  grid-area: content;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  background: v.$bg;
+  // Sidebar owns the divider via its own border-right — no border-left here.
+}
+
+// ── Narrow viewport: sidebar becomes a fixed drawer (handled in sidebar's
+//     SCSS); the grid collapses to a single column. ───────────────────
+@media (max-width: 900px) {
+  :host {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'header'
+      'content';
+  }
+  .app-shell-sidebar {
+    // Removed from grid flow — sidebar component handles its own
+    // fixed positioning + slide-in transform.
+    grid-area: auto;
+  }
+}

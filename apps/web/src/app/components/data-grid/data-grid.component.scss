@@ -1,0 +1,199 @@
+@use '../../../styles/variables' as v;
+
+// Host must grow within the parent flex container so the grid surface has a
+// non-zero height. Without this, AG Grid collapses to ~44px and the rows are
+// rendered offscreen.
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.grid-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+// ── Sub-header above the grid ─────────────────────────────────────────
+// NO border-bottom here. The AG Grid header has a distinct background
+// ($bg-subtle) that acts as the divider — adding a border here would
+// double up against the grid's own header top edge.
+.grid-subheader {
+  display: flex;
+  align-items: center;
+  gap: v.$space-4;
+  height: v.$subheader-height;
+  padding: 0 v.$grid-padding;
+  background: v.$bg;
+}
+
+.search-field {
+  position: relative;
+  flex: 1;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: v.$space-2;
+  display: inline-flex;
+  pointer-events: none;
+  color: v.$fg-subtle; // 4.85:1 — passes 3:1 UI minimum
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.app-input {
+  width: 100%;
+  height: 32px;
+  padding: 0 32px 0 28px;
+  background: v.$bg;
+  color: v.$fg;
+  border: 1px solid v.$border-strong;
+  border-radius: v.$radius-md;
+  font-family: inherit;
+  font-size: v.$font-size-sm;
+  line-height: 1;
+  transition:
+    border-color v.$motion-fast v.$ease-standard,
+    box-shadow v.$motion-fast v.$ease-standard;
+
+  &::placeholder { color: v.$fg-subtle; } // 4.85:1
+
+  &:hover:not(:disabled) { border-color: v.$fg-subtle; }
+
+  &:focus {
+    outline: none;
+    border-color: v.$accent;
+    box-shadow: v.$ring;
+  }
+
+  &:disabled {
+    background: v.$bg-subtle;
+    color: v.$fg-muted; // 7.83:1 — readable when disabled
+    cursor: not-allowed;
+  }
+}
+
+.search-clear {
+  position: absolute;
+  right: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: v.$radius-sm;
+  background: transparent;
+  color: v.$fg-muted;
+  cursor: pointer;
+
+  &:hover  { background: v.$bg-muted; color: v.$fg; }
+  &:focus-visible { box-shadow: v.$ring; outline: none; }
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.grid-meta {
+  display: flex;
+  align-items: center;
+  gap: v.$space-2;
+  font-size: v.$font-size-sm;
+  color: v.$fg-muted; // 7.83:1
+}
+
+.meta-value {
+  color: v.$fg;
+  font-weight: v.$font-weight-semibold;
+
+  &.tabular { font-variant-numeric: tabular-nums; }
+}
+
+.meta-label { color: v.$fg-muted; }
+
+.meta-badge {
+  margin-left: v.$space-2;
+  padding: 2px v.$space-2;
+  border: 1px solid v.$border;
+  border-radius: v.$radius-sm;
+  background: v.$bg-subtle;
+  color: v.$fg-muted;
+  font-size: v.$font-size-xs;
+  font-weight: v.$font-weight-medium;
+}
+
+.loading-dot {
+  margin-left: v.$space-2;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: v.$accent;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+.loading-label { color: v.$fg-muted; }
+
+// ── Inline error ──────────────────────────────────────────────────────
+.grid-error {
+  display: flex;
+  align-items: center;
+  gap: v.$space-2;
+  margin: v.$space-2 v.$grid-padding;
+  padding: v.$space-2 v.$space-3;
+  background: v.$bg;
+  color: v.$danger; // 7.18:1
+  border: 1px solid v.$border;
+  border-left: 3px solid v.$danger;
+  border-radius: v.$radius-md;
+  font-size: v.$font-size-sm;
+
+  mat-icon {
+    color: v.$danger;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+// ── Grid surface — flush, no frame. AG Grid renders its own header. ──
+.grid-surface {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: v.$bg;
+  overflow: hidden;
+  border-top: 1px solid v.$border;
+}
+
+.grid-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  height: 2px;
+
+  --mdc-linear-progress-active-indicator-color: #{v.$accent};
+  --mdc-linear-progress-track-color: transparent;
+}
+
+.grid {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}

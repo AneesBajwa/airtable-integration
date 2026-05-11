@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "useUnknownInCatchVariables": true,
+    "declaration": true,
+    "composite": true,
+    "incremental": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@airtable-integration/shared": ["packages/shared/src/index.ts"],
+      "@airtable-integration/shared/*": ["packages/shared/src/*"]
+    }
+  }
+}

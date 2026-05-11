@@ -1,0 +1,47 @@
+<section class="mfa-banner" role="region" aria-labelledby="mfa-heading">
+  <div class="mfa-leading" aria-hidden="true">
+    <span class="mfa-icon"><mat-icon>lock</mat-icon></span>
+  </div>
+
+  <div class="mfa-copy">
+    <h2 id="mfa-heading" class="mfa-heading">Two-factor verification required</h2>
+    <span class="mfa-sub">
+      The scraper is paused at Airtable's MFA screen. Enter the 6-digit code from your authenticator app to continue.
+    </span>
+  </div>
+
+  <div class="mfa-action">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="code-field">
+      <mat-label>Code</mat-label>
+      <input
+        #codeInput
+        matInput
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        maxlength="6"
+        [ngModel]="value()"
+        (ngModelChange)="value.set($event)"
+        (keydown.enter)="onSubmit()"
+        [attr.aria-invalid]="!!error()"
+        [attr.aria-describedby]="error() ? 'mfa-error' : null"
+        placeholder="000000"
+      />
+    </mat-form-field>
+    <button
+      mat-flat-button
+      class="mfa-submit"
+      [disabled]="!canSubmit() || submitting()"
+      (click)="onSubmit()"
+    >
+      Submit
+    </button>
+  </div>
+
+  @if (error()) {
+    <span id="mfa-error" class="mfa-error" role="alert">
+      <mat-icon aria-hidden="true">error_outline</mat-icon>
+      {{ error() }}
+    </span>
+  }
+</section>

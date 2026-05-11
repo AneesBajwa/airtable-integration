@@ -1,0 +1,30 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "./dist/out-tsc",
+    "baseUrl": ".",
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "isolatedModules": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "bundler",
+    "module": "ES2022",
+    "target": "ES2022",
+    "useDefineForClassFields": false,
+    "lib": ["ES2022", "dom"],
+    "importHelpers": true,
+    "composite": false,
+    "paths": {
+      "@airtable-integration/shared": ["../../packages/shared/src/index.ts"],
+      "@/*": ["src/app/*"]
+    }
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
+}

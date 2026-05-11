@@ -1,0 +1,57 @@
+<header class="app-header">
+  <div class="header-left">
+    <button
+      type="button"
+      class="menu-toggle"
+      (click)="menuToggle.emit()"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="app-sidebar"
+      aria-label="Toggle collections"
+    >
+      <mat-icon aria-hidden="true">menu</mat-icon>
+    </button>
+
+    <div class="brand">
+      <span class="wordmark">Airtable</span>
+      <span class="wordmark-sep" aria-hidden="true">/</span>
+      <span class="wordmark-sub">Integration</span>
+    </div>
+
+    <span
+      class="status"
+      [class.status--ok]="statusKind() === 'ok'"
+      [class.status--off]="statusKind() === 'off'"
+      [class.status--busy]="statusKind() === 'busy'"
+    >
+      <span class="status-dot" aria-hidden="true"></span>
+      <span class="status-text" aria-live="polite" aria-atomic="true">{{ statusText() }}</span>
+    </span>
+  </div>
+
+  <div class="header-actions">
+    @if (!connected()) {
+      <button type="button" class="app-btn app-btn--primary" (click)="connectClick.emit()">
+        Connect
+      </button>
+    } @else {
+      <button
+        type="button"
+        class="app-btn"
+        (click)="syncClick.emit()"
+        [disabled]="syncing()"
+        title="Pull bases, tables, records, users from Airtable"
+      >
+        {{ syncing() ? 'Syncing…' : 'Sync' }}
+      </button>
+      <button
+        type="button"
+        class="app-btn app-btn--primary"
+        (click)="scrapeClick.emit()"
+        [disabled]="scraping()"
+        title="Fetch revision history for every record"
+      >
+        {{ scraping() ? 'Scraping…' : 'Scrape' }}
+      </button>
+    }
+  </div>
+</header>

@@ -1,0 +1,35 @@
+<nav
+  id="app-sidebar"
+  class="app-sidebar"
+  [class.is-open]="open()"
+  aria-label="Collections"
+>
+  <div class="sidebar-head">
+    <span class="sidebar-eyebrow">Collections</span>
+    <span class="sidebar-count" [attr.aria-label]="collections().length + ' collections'">
+      {{ collections().length }}
+    </span>
+  </div>
+
+  @if (!collections().length) {
+    <p class="sidebar-empty">No collections synced yet.</p>
+  } @else {
+    <ul class="sidebar-list" role="list">
+      @for (c of collections(); track c.name) {
+        <li>
+          <button
+            type="button"
+            class="sidebar-item"
+            [class.is-active]="c.name === entity()"
+            (click)="onPick(c.name)"
+            [attr.aria-current]="c.name === entity() ? 'page' : null"
+            [title]="c.name"
+          >
+            <span class="sidebar-item-name">{{ c.name }}</span>
+            <span class="sidebar-item-count">{{ c.count | number }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</nav>

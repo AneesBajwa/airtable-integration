@@ -1,0 +1,69 @@
+<div class="grid-wrap">
+  <!-- Sub-header — search + record count, directly above the data. -->
+  <div class="grid-subheader">
+    <div class="search-field" [class.has-value]="!!searchDisplay()">
+      <span class="search-icon" aria-hidden="true">
+        <mat-icon>search</mat-icon>
+      </span>
+      <input
+        type="text"
+        class="app-input search-input"
+        [ngModel]="searchDisplay()"
+        (ngModelChange)="onSearchInput($event)"
+        [disabled]="!entity()"
+        placeholder="Filter rows…"
+        aria-label="Filter rows"
+      />
+      @if (searchDisplay()) {
+        <button
+          type="button"
+          class="search-clear"
+          (click)="onClearSearch()"
+          aria-label="Clear search"
+        >
+          <mat-icon aria-hidden="true">close</mat-icon>
+        </button>
+      }
+    </div>
+
+    <div class="grid-meta">
+      <span class="meta-value tabular">{{ entityCount() | number }}</span>
+      <span class="meta-label">{{ entityCount() === 1 ? 'record' : 'records' }}</span>
+      @if (useInfinite()) {
+        <span class="meta-badge" title="Server-side pagination (infinite row model)">
+          server-paged
+        </span>
+      }
+      @if (loading()) {
+        <span class="loading-dot" aria-hidden="true"></span>
+        <span class="loading-label" aria-live="polite">Loading</span>
+      }
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="grid-error" role="alert">
+      <mat-icon aria-hidden="true">error_outline</mat-icon>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  <div class="grid-surface">
+    @if (loading()) {
+      <mat-progress-bar class="grid-progress" mode="indeterminate" />
+    }
+    <ag-grid-angular
+      class="grid"
+      [columnDefs]="columnDefs()"
+      [rowData]="useInfinite() ? null : rowData()"
+      [defaultColDef]="defaultColDef"
+      [pagination]="true"
+      [paginationPageSize]="paginationPageSize"
+      [cacheBlockSize]="paginationPageSize"
+      [rowModelType]="useInfinite() ? 'infinite' : 'clientSide'"
+      [datasource]="useInfinite() ? datasource() : undefined"
+      [theme]="theme"
+      (gridReady)="onGridReady($event)"
+    />
+  </div>
+</div>

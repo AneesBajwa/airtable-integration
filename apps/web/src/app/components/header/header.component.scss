@@ -1,0 +1,158 @@
+@use '../../../styles/variables' as v;
+
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: v.$space-4;
+  height: v.$header-height;
+  padding: 0 v.$space-4;
+  background: v.$bg;
+  border-bottom: 1px solid v.$border-strong;
+  box-shadow: v.$elev-1;
+}
+
+// ── Left cluster: hamburger (narrow only) + brand + status ────────────
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: v.$space-3;
+  min-width: 0;
+}
+
+.menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid v.$border-strong;
+  border-radius: v.$radius-md;
+  background: v.$bg;
+  color: v.$fg;
+  cursor: pointer;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover { background: v.$bg-muted; }
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: v.$space-2;
+  min-width: 0;
+}
+
+.wordmark {
+  font-size: v.$font-size-md;
+  font-weight: v.$font-weight-semibold;
+  color: v.$fg;
+  letter-spacing: -0.01em;
+}
+
+.wordmark-sep {
+  color: v.$fg-subtle;
+  font-weight: v.$font-weight-regular;
+}
+
+.wordmark-sub {
+  font-size: v.$font-size-md;
+  color: v.$fg-muted;
+}
+
+// ── Status: anchored next to brand, not floating in the center ────────
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: v.$space-2;
+  margin-left: v.$space-3;
+  padding-left: v.$space-3;
+  border-left: 1px solid v.$border;
+  font-size: v.$font-size-sm;
+  color: v.$fg-muted;
+  line-height: 1;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: v.$fg-subtle;
+  flex-shrink: 0;
+}
+
+.status--ok  .status-dot { background: v.$success; }
+.status--off .status-dot { background: v.$fg-subtle; }
+.status--busy .status-dot {
+  background: v.$accent;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+// ── Right cluster: actions ────────────────────────────────────────────
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: v.$space-2;
+  flex-shrink: 0;
+}
+
+.app-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 v.$space-4;
+  border: 1px solid v.$border-strong;
+  border-radius: v.$radius-md;
+  background: v.$bg;
+  color: v.$fg;
+  font-family: inherit;
+  font-size: v.$font-size-sm;
+  font-weight: v.$font-weight-medium;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color v.$motion-fast v.$ease-standard,
+    border-color v.$motion-fast v.$ease-standard,
+    box-shadow v.$motion-fast v.$ease-standard;
+
+  &:hover:not([disabled])  { background: v.$bg-muted; }
+  &:active:not([disabled]) { background: v.$bg-subtle; }
+  &:focus-visible { box-shadow: v.$ring; border-color: v.$accent; }
+  &[disabled]     { opacity: 0.55; cursor: not-allowed; }
+}
+
+.app-btn--primary {
+  background: v.$accent;
+  color: v.$accent-fg;
+  border-color: v.$accent;
+
+  &:hover:not([disabled])  { background: v.$accent-hover; border-color: v.$accent-hover; }
+  &:active:not([disabled]) { background: v.$accent-hover; }
+}
+
+// ── Narrow viewport ──────────────────────────────────────────────────
+@media (max-width: 900px) {
+  .menu-toggle { display: inline-flex; }
+  .status {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: 0;
+  }
+  .wordmark-sub, .wordmark-sep {
+    display: none;
+  }
+}
