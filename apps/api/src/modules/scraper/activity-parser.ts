@@ -3,23 +3,14 @@ import type { AnyNode } from 'domhandler';
 import { ColumnType, type RevisionHistoryEntry } from '@airtable-integration/shared';
 
 /**
- * Parse Airtable's `/readRowActivitiesAndComments` response.
+ * Parse Airtable's revision-history response.
  *
- * Transport shape (captured from Airtable's web UI, undocumented — see ASSUMPTIONS #9, #10):
- *   {
- *     msg: "SUCCESS",
- *     data: {
- *       orderedActivityAndCommentIds: string[],
- *       rowActivityInfoById: {
- *         [id]: { createdTime, originatingUserId, diffRowHtml, groupType, ... }
- *       },
- *       commentsById, rowActivityOrCommentUserObjById, ...
- *     }
- *   }
+ * The envelope is JSON but the cell-level diff is HTML embedded in
+ * `data.rowActivityInfoById[id].diffRowHtml`. Cheerio walks
+ * `.historicalCellContainer` blocks and emits one entry per (activity, column)
+ * where the column is a Status or Assignee.
  *
- * The cell-level changes are rendered as HTML inside `diffRowHtml`. We use Cheerio
- * to walk `.historicalCellContainer` blocks and emit one {@link RevisionHistoryEntry}
- * per (activity, column) where the column is a Status or Assignee.
+ * Shape is undocumented — Airtable can change it without warning.
  */
 
 export interface ActivityInfo {
@@ -36,7 +27,7 @@ export interface ActivityEnvelope {
   };
 }
 
-// data-columntype values we care about. Captured from Airtable's HTML.
+// Airtable's `data-columntype` values for the columns we track.
 const STATUS_TYPES = new Set(['select', 'multipleSelects']);
 const ASSIGNEE_TYPES = new Set(['collaborator', 'multipleCollaborators']);
 

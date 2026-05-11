@@ -88,8 +88,6 @@ export class AppComponent implements OnInit {
       });
   }
 
-  // ── User actions ────────────────────────────────────────────────────
-
   onEntityChange(name: string): void {
     this.entity.set(name);
     this.reloadKey.update((k) => k + 1);
@@ -148,8 +146,6 @@ export class AppComponent implements OnInit {
       this.mfaSubmitting.set(false);
     }
   }
-
-  // ── Internal: state refresh ─────────────────────────────────────────
 
   private handleAuthQueryString(): void {
     const params = new URLSearchParams(window.location.search);
@@ -229,19 +225,20 @@ export class AppComponent implements OnInit {
       ]);
       this.scraperState.set(state.state);
 
-      const stillRunning =
-        run.state === ScraperState.Scraping ||
-        run.state === ScraperState.AwaitingMfa ||
-        run.state === ScraperState.VerifyingMfa ||
-        run.state === ScraperState.Acquiring;
-
-      if (stillRunning) {
+      // A run is in flight while `startedAt` is set but `completedAt` is not.
+      // We can't rely on `state` alone — the session state stays at `Ready` for
+      // most of the scrape (it tracks cookies, not the run).
+      if (run.startedAt && !run.completedAt) {
         this.scraping.set(true);
         return;
       }
 
-      if (this.scraping()) {
-        if (run.state === ScraperState.Ready) {
+      if (this.scraping() && run.completedAt) {
+        if (run.state === ScraperState.Failed) {
+          this.snack.open(`Scrape failed: ${state.lastError ?? 'unknown'}`, 'Dismiss', {
+            duration: 8000,
+          });
+        } else {
           this.snack.open(
             `Scrape complete: ${run.processed} ok, ${run.failed} failed`,
             'Dismiss',
@@ -249,10 +246,6 @@ export class AppComponent implements OnInit {
           );
           await this.refreshCollections();
           this.reloadKey.update((k) => k + 1);
-        } else if (run.state === ScraperState.Failed) {
-          this.snack.open(`Scrape failed: ${state.lastError ?? 'unknown'}`, 'Dismiss', {
-            duration: 8000,
-          });
         }
       }
       this.scraping.set(false);
@@ -262,8 +255,6 @@ export class AppComponent implements OnInit {
       this.scrapeStatusInFlight = false;
     }
   }
-
-  // ── Helpers ─────────────────────────────────────────────────────────
 
   private errorMessage(err: unknown): string {
     if (err instanceof HttpErrorResponse) {
@@ -284,13 +275,11 @@ export class AppComponent implements OnInit {
 
   private handleHttpError(err: unknown): void {
     if (err instanceof HttpErrorResponse) {
-      const body = err.error as { error?: string; message?: string } | null;
+      const body = err.error as { error?: string } | null;
       if (err.status === 401 && body?.error === RECONNECT_REQUIRED) {
         this.promptReconnect();
         return;
       }
-      this.snack.open(body?.message ?? err.message, 'Dismiss', { duration: 6000 });
-      return;
     }
     this.snack.open(this.errorMessage(err), 'Dismiss', { duration: 6000 });
   }

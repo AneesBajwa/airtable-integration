@@ -4,24 +4,17 @@
 //  Component SCSS files MUST import via:
 //    @use '../../../styles/variables' as v;
 //
-//  v3: monochrome + 1 accent (black). All text/UI tokens pass WCAG 2.2
-//  AA (4.5:1 for text, 3:1 for UI elements) against $bg / $bg-subtle.
-//  Inputs are native-styled, not Material outlined.
+//  Monochrome + 1 accent. All text/UI tokens pass WCAG 2.2 AA against $bg.
 // ──────────────────────────────────────────────────────────────────────
 
 // ── Spacing (4 / 8px grid) ─────────────────────────────────────────────
-$space-0: 0;
 $space-1: 4px;
 $space-2: 8px;
 $space-3: 12px;
 $space-4: 16px;
 $space-5: 20px;
 $space-6: 24px;
-$space-8: 32px;
-$space-10: 40px;
 $space-12: 48px;
-$space-16: 64px;
-$space-20: 80px;
 
 // ── Layout ─────────────────────────────────────────────────────────────
 $header-height: 52px;
@@ -32,7 +25,6 @@ $grid-padding: $space-4;
 // ── Radius ─────────────────────────────────────────────────────────────
 $radius-sm: 4px;
 $radius-md: 6px;
-$radius-lg: 8px;
 $radius-pill: 999px;
 
 // ── Typography ─────────────────────────────────────────────────────────
@@ -50,50 +42,45 @@ $font-size-sm: 12px;
 $font-size-base: 13px;
 $font-size-md: 14px;
 $font-size-lg: 15px;
-$font-size-xl: 18px;
-$font-icon-empty: 36px;
 
 $font-weight-regular: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;
 
-$leading-tight: 1.25;
 $leading-normal: 1.5;
 
 // ── Neutrals (Zinc, monochrome) ────────────────────────────────────────
 $bg:           #ffffff;
 $bg-subtle:    #fafafa;
 $bg-muted:     #f4f4f5;
-$bg-hover:     #f4f4f5;
 
-$border:        #e4e4e7; // zinc-200 — hairline divider (decorative, 1px)
+$border:        #e4e4e7; // zinc-200 — hairline divider
 $border-strong: #d4d4d8; // zinc-300 — input rest, hover border
 
-// Text & icon foreground tokens. All verified vs $bg (#ffffff):
-$fg:        #0a0a0a; // 21.0:1  AAA  — strong text, headings, primary values
-$fg-muted:  #52525b; // 7.83:1  AAA  — body text, labels, secondary values
-$fg-subtle: #71717a; // 4.85:1   AA  — eyebrows, counts, icon-color, placeholders
+// Foreground tokens (verified vs $bg = #ffffff):
+$fg:        #0a0a0a; // 21.0:1 AAA — primary text
+$fg-muted:  #52525b; //  7.83:1 AAA — body, labels
+$fg-subtle: #71717a; //  4.85:1  AA — eyebrows, placeholders, icons
 
 // ── Accent (single — black) ────────────────────────────────────────────
-$accent:       #171717; // 17.4:1 AAA (on $bg) / 12.6:1 (on $accent-fg)
+$accent:       #171717;
 $accent-fg:    #ffffff;
 $accent-hover: #000000;
 $accent-soft:  rgba(24, 24, 27, 0.08);
 
 // ── Status ─────────────────────────────────────────────────────────────
-$success:        #15803d; // 4.83:1 AA on $bg  (was #16a34a / 3.36:1 — failed)
-$danger:         #b91c1c; // 7.18:1 AAA on $bg (was #dc2626 / 4.83:1)
-$warning:        #b45309; // 5.95:1 AA on $bg  (was #d97706 / 3.97:1 — failed)
+$success:        #15803d; // 4.83:1 AA
+$danger:         #b91c1c; // 7.18:1 AAA
+$warning:        #b45309; // 5.95:1 AA
 $warning-bg:     #fffbeb;
 $warning-border: #fde68a;
-$warning-accent: #d97706; // bright accent — for border-left only (decorative)
+$warning-accent: #d97706; // decorative border-left only
 
 // ── Focus ──────────────────────────────────────────────────────────────
 $ring-color: rgba(10, 10, 10, 0.4);
 $ring:       0 0 0 3px $ring-color;
 
 // ── Elevation ──────────────────────────────────────────────────────────
-$elev-0: none;
 $elev-1: 0 1px 0 rgba(0, 0, 0, 0.02);
 $elev-pop: 0 8px 24px rgba(0, 0, 0, 0.08);
 

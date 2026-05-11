@@ -17,7 +17,6 @@ const REFRESH_BUFFER_MS = 60 * 1000;
 const pkceStore = new Map<string, PkceSession>();
 const inFlightRefreshes = new Map<string, Promise<string>>();
 
-/** Thrown for any error during the OAuth callback handshake. */
 export class OAuthCallbackError extends Error {
   constructor(
     message: string,
@@ -27,7 +26,6 @@ export class OAuthCallbackError extends Error {
   }
 }
 
-/** Thrown when the stored refresh token is rejected by Airtable. The UI must prompt to reconnect. */
 export class ReconnectRequiredError extends Error {
   constructor(message = 'Airtable connection expired — please re-connect') {
     super(message);
@@ -47,7 +45,6 @@ function basicAuthHeader(): string {
   ).toString('base64');
 }
 
-/** Generate a fresh PKCE verifier + state, persist server-side, return the authorize URL. */
 export function buildAuthorizeUrl(): { authorizeUrl: string } {
   gcSessions();
   const verifier = generateCodeVerifier();
@@ -98,7 +95,6 @@ async function persistTokens(userId: string, tokens: AirtableTokenResponse): Pro
   );
 }
 
-/** Exchange the OAuth `code` for tokens and persist them encrypted. */
 export async function handleCallback(params: { code: string; state: string }): Promise<void> {
   const session = pkceStore.get(params.state);
   if (!session) {
@@ -145,8 +141,12 @@ async function doRefresh(userId: string): Promise<string> {
 }
 
 /**
- * Return a usable access token for `userId`. Refreshes (with rotation) when within
- * the expiry buffer; coalesces concurrent refreshes for the same user.
+ * Returns a valid access token, refreshing if expiry is within
+ * {@link REFRESH_BUFFER_MS}.
+ *
+ * Concurrent callers for the same user share a single in-flight refresh via
+ * {@link inFlightRefreshes}. Airtable rotates the refresh token on every use,
+ * so a parallel second refresh would invalidate the first one's response.
  */
 export async function getAccessToken(userId: string = config.demoUserId): Promise<string> {
   const doc = await AirtableOAuthToken.findOne({ userId });

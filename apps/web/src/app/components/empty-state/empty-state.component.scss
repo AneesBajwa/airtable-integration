@@ -1,5 +1,13 @@
 @use '../../../styles/variables' as v;
 
+// Host stretches to fill the parent flex column so the empty card lands
+// centered in the viewport, not flush to the top-left.
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
 .empty {
   display: flex;
   flex: 1;
@@ -26,7 +34,7 @@
   margin-bottom: v.$space-4;
   border-radius: v.$radius-pill;
   background: v.$bg-muted;
-  color: v.$fg-muted; // 7.83:1
+  color: v.$fg-muted;
 
   mat-icon {
     font-size: 22px;
@@ -47,7 +55,7 @@
   margin: 0 0 v.$space-5;
   font-size: v.$font-size-md;
   line-height: v.$leading-normal;
-  color: v.$fg-muted; // 7.83:1
+  color: v.$fg-muted;
 }
 
 .empty-cta {

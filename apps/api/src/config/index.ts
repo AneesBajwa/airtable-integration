@@ -70,26 +70,23 @@ export const config = {
     scraper: {
       email: optional('AIRTABLE_SCRAPER_EMAIL', ''),
       password: optional('AIRTABLE_SCRAPER_PASSWORD', ''),
-      // ASSUMPTION #9: activity-endpoint path template. Captured from Airtable's web UI
-      // — undocumented and may change. `{recordId}` is substituted at request time.
-      // Override via env without code changes.
+      // Airtable's internal endpoint — undocumented, may change. `{recordId}` is
+      // substituted per request. Override via env without redeploying.
       activityPath: optional(
         'AIRTABLE_ACTIVITY_PATH',
         '/v0.3/row/{recordId}/readRowActivitiesAndComments',
       ),
-      // ASSUMPTION #13: 10 records in flight at once.
       concurrency: num('SCRAPER_CONCURRENCY', 10),
     },
-    pageThrottleMs: num('AIRTABLE_PAGE_THROTTLE_MS', 200),
     maxRetries: num('AIRTABLE_MAX_RETRIES', 3),
   },
 
-  // Encryption keys — required at startup. We don't fail the import; we let crypto/aes-gcm
-  // do the validation so the error message is consistent with the rest of the crypto module.
+  // Validated lazily by `crypto/aes-gcm` on first use so missing-key errors all
+  // route through the same code path.
   tokenEncryptionKey: process.env['TOKEN_ENCRYPTION_KEY'] ?? '',
   scraperEncryptionKey: process.env['SCRAPER_ENCRYPTION_KEY'] ?? '',
 
-  // ASSUMPTION #8: there is no auth system; everything is keyed on a single demo user.
+  // Single-user deployment: no per-request auth, everything is keyed on this id.
   demoUserId: 'demo',
 };
 

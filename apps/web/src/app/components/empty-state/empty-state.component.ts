@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-/** Centered icon + heading + message + optional CTA button for empty / "first run" surfaces. */
 @Component({
   selector: 'app-empty-state',
   standalone: true,

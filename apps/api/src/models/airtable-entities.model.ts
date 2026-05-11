@@ -1,10 +1,7 @@
 import { Schema, model } from 'mongoose';
 
-/**
- * Mongo models for Airtable's first-class entities.
- * Per ASSUMPTION #5: bases / tables / users use fixed-name collections; records get
- * one collection per (baseId, tableId) — see records.repository.ts.
- */
+// Bases / tables / users use fixed-name collections. Records live in per-table
+// collections — see records.repository.ts.
 
 const AirtableBaseSchema = new Schema(
   {

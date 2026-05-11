@@ -2,7 +2,6 @@ import { Schema, model, type Model } from 'mongoose';
 import type { EncryptedBlob } from '@/crypto/aes-gcm.js';
 import { EncryptedBlobSchema } from '@/models/encrypted-blob.schema.js';
 
-/** Encrypted OAuth tokens, one document per `userId`. */
 export interface IOAuthToken {
   userId: string;
   accessToken: EncryptedBlob;

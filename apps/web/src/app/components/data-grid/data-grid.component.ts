@@ -69,7 +69,7 @@ export class DataGridComponent {
   private readonly api = inject(ApiService);
   private gridApi: GridApi | null = null;
 
-  /** AG Grid 33 theming via withParams — values match _variables.scss tokens. */
+  // Token-aligned grid theme. Keep these values in sync with `_variables.scss`.
   readonly theme: Theme = themeQuartz.withParams({
     backgroundColor: '#ffffff',
     foregroundColor: '#0a0a0a',
@@ -256,9 +256,6 @@ export class DataGridComponent {
     return row as Row;
   }
 
-  private readonly objectCellRenderer = (p: { value: unknown }): string => {
-    if (p.value === null || p.value === undefined) return '';
-    if (typeof p.value === 'object') return JSON.stringify(p.value);
-    return String(p.value);
-  };
+  private readonly objectCellRenderer = (p: { value: unknown }): string =>
+    typeof p.value === 'object' && p.value !== null ? JSON.stringify(p.value) : String(p.value ?? '');
 }

@@ -26,7 +26,7 @@
 .sidebar-eyebrow {
   font-size: v.$font-size-xs;
   font-weight: v.$font-weight-semibold;
-  color: v.$fg-muted; // 7.83:1 — passes AA-large
+  color: v.$fg-muted;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -63,7 +63,7 @@
   border: 0;
   border-radius: v.$radius-md;
   background: transparent;
-  color: v.$fg-muted; // 7.83:1
+  color: v.$fg-muted;
   font-family: inherit;
   font-size: v.$font-size-sm;
   font-weight: v.$font-weight-regular;
@@ -96,7 +96,7 @@
 .sidebar-item-count {
   font-size: v.$font-size-xs;
   font-variant-numeric: tabular-nums;
-  color: v.$fg-subtle; // 4.85:1 — passes AA
+  color: v.$fg-subtle;
   flex-shrink: 0;
   font-weight: v.$font-weight-medium;
 }

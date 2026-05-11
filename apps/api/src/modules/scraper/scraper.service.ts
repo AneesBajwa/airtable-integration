@@ -130,18 +130,16 @@ async function fetchWithRetry(
   appId: string,
   session: DecryptedSession,
 ): Promise<ActivityEnvelope> {
-  let lastErr: unknown;
-  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+  for (const delay of RETRY_DELAYS_MS) {
     try {
       return await fetchActivity(recordId, appId, session);
     } catch (err) {
-      lastErr = err;
       const message = err instanceof Error ? err.message : String(err);
       if (message.startsWith('auth_expired:')) throw err;
-      if (attempt < RETRY_DELAYS_MS.length) await sleep(RETRY_DELAYS_MS[attempt]!);
+      await sleep(delay);
     }
   }
-  throw lastErr;
+  return await fetchActivity(recordId, appId, session);
 }
 
 async function persistEntries(entries: ReturnType<typeof parseActivityResponse>): Promise<void> {
@@ -284,14 +282,12 @@ export function startScrape(log: FastifyBaseLogger): { ok: true } {
 
 export async function getScraperState(): Promise<{
   state: ScraperState;
-  message: string | null;
   cookiesExpireAt: string | null;
   lastError: string | null;
 }> {
   const doc = await ScraperSession.findOne({ userId: config.demoUserId }).lean();
   return {
     state: doc?.state ?? ScraperState.Idle,
-    message: null,
     cookiesExpireAt: doc?.expiresAt?.toISOString() ?? null,
     lastError: doc?.lastError ?? null,
   };

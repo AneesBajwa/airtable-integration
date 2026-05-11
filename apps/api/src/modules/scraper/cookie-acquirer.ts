@@ -6,14 +6,6 @@ import { encrypt, decrypt } from '@/crypto/aes-gcm.js';
 import { ScraperSession } from '@/models/scraper-session.model.js';
 import { mfaBus } from '@/modules/scraper/mfa-bus.js';
 
-/**
- * Drives Playwright through an Airtable login (with optional MFA) and persists
- * the resulting session cookies, encrypted, for later use by the scraper.
- *
- * The active browser is module-level so SIGTERM can release Chromium cleanly via
- * {@link closeAllBrowsers}.
- */
-
 const LOGIN_URL = 'https://airtable.com/login';
 const LOGIN_TIMEOUT_MS = 60_000;
 const MFA_TIMEOUT_MS = 5 * 60_000;
@@ -25,9 +17,9 @@ const MFA_SELECTOR = 'input[name="mfaCode"], input[autocomplete="one-time-code"]
 const SUBMIT_SELECTOR = 'button[type="submit"], button:has-text("Continue"), button:has-text("Next"), button:has-text("Sign in"), button:has-text("Verify")';
 const DASHBOARD_URL_RE = /airtable\.com\/(?!login|sso|sign|verify)/;
 
+// Module-level so the SIGTERM handler can release Chromium cleanly.
 let activeBrowser: Browser | null = null;
 
-/** Release any active Chromium instance. Called from the SIGTERM handler. */
 export async function closeAllBrowsers(): Promise<void> {
   if (!activeBrowser) return;
   try {
@@ -37,7 +29,6 @@ export async function closeAllBrowsers(): Promise<void> {
   }
 }
 
-/** Minimal cookie shape that both Playwright and the manual-paste endpoint produce. */
 export interface SessionCookie {
   name: string;
   value: string;
@@ -96,10 +87,8 @@ export async function acquireCookies(log: FastifyBaseLogger): Promise<void> {
   }
   await setState(ScraperState.Acquiring);
 
-  // ASSUMPTION #22: launch headful Chromium — Airtable's PerimeterX bot mitigation
-  // serves a "Verify it's you" challenge to headless browsers, so the login form
-  // never renders. The FSD's MFA flow already requires an operator, so a visible
-  // window is consistent with that design.
+  // Headful: Airtable's PerimeterX bot mitigation serves a "Verify it's you"
+  // challenge to headless Chromium, so the login form never renders.
   const browser = await chromium.launch({ headless: false });
   activeBrowser = browser;
   try {
@@ -109,7 +98,6 @@ export async function acquireCookies(log: FastifyBaseLogger): Promise<void> {
 
     await page.goto(LOGIN_URL, { waitUntil: 'domcontentloaded' });
 
-    // ASSUMPTION #10: selectors are best-guesses against Airtable's login HTML.
     await page.fill(EMAIL_SELECTOR, config.airtable.scraper.email);
     await page.click(SUBMIT_SELECTOR);
 

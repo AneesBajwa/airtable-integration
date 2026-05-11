@@ -25,7 +25,7 @@
   height: 28px;
   border-radius: v.$radius-pill;
   background: rgba(180, 83, 9, 0.15); // $warning at 15%
-  color: v.$warning; // 5.95:1
+  color: v.$warning;
 
   mat-icon {
     font-size: 16px;
@@ -47,7 +47,7 @@
 .mfa-sub {
   display: block;
   font-size: v.$font-size-sm;
-  color: v.$fg-muted; // 7.83:1
+  color: v.$fg-muted;
   line-height: v.$leading-normal;
 }
 
@@ -57,9 +57,6 @@
   gap: v.$space-2;
 }
 
-// MFA keeps mat-form-field — fixed width, no flex weirdness, no prefix icon,
-// and the warning-toned outline overrides apply cleanly. Demonstrates
-// Angular Material form-field use per FSD stack requirement #3.
 .code-field {
   width: 160px;
 
@@ -95,7 +92,7 @@
   align-items: center;
   gap: v.$space-2;
   font-size: v.$font-size-sm;
-  color: v.$danger; // 7.18:1
+  color: v.$danger;
 
   mat-icon {
     color: v.$danger;

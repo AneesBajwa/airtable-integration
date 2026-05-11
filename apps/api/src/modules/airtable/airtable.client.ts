@@ -3,11 +3,6 @@ import { config } from '@/config/index.js';
 import { getAccessToken } from '@/modules/oauth/oauth.service.js';
 import type { RawBase, RawRecord, RawTable, RawUser } from '@/types/airtable.types.js';
 
-/**
- * Thin Airtable REST client. Loops the documented `offset` cursor for pagination
- * and honors `Retry-After` on 429s with a 30s floor.
- */
-
 interface AirtableListResponse<T> {
   records?: T[];
   bases?: T[];
@@ -88,7 +83,6 @@ async function paginated<T>(
     });
     out.push(...collect(resp));
     offset = resp.offset;
-    if (offset) await sleep(config.airtable.pageThrottleMs);
   } while (offset);
   return out;
 }
@@ -102,15 +96,9 @@ export const listTables = (baseId: string): Promise<RawTable[]> =>
 export const listRecords = (baseId: string, tableId: string): Promise<RawRecord[]> =>
   paginated<RawRecord>(`/${baseId}/${tableId}`, (r) => r.records ?? [], { pageSize: '100' });
 
-/**
- * Airtable doesn't publicly expose a `/users` list endpoint (ASSUMPTION #21).
- * We try `/meta/users` first and fall back to `/meta/whoami` to capture the connected user.
- */
+// Airtable's public API has no `/users` list endpoint — `whoami` returns the
+// connected user, which is the closest equivalent.
 export async function listUsers(): Promise<RawUser[]> {
-  try {
-    return await paginated<RawUser>('/meta/users', (r) => r.users ?? []);
-  } catch {
-    const me = await airtableGet<RawUser>('/meta/whoami');
-    return me.id ? [me] : [];
-  }
+  const me = await airtableGet<RawUser>('/meta/whoami');
+  return me.id ? [me] : [];
 }

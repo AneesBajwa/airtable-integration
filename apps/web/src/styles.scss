@@ -1,10 +1,7 @@
-// Global stylesheet. Material 3 prebuilt theme is loaded via angular.json.
-// All design tokens live in styles/_variables.scss — never hardcode here.
+// All design tokens live in styles/_variables.scss — never hardcode hex/rgba here.
 
 @use './styles/variables' as v;
 
-// ── Root: Material sys-token overrides ─────────────────────────────────
-// AG Grid theming lives in the component (themeQuartz.withParams) — not here.
 :root {
   --mat-sys-primary: #{v.$accent};
   --mat-sys-on-primary: #{v.$accent-fg};

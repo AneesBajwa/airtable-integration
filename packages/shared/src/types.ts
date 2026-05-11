@@ -1,45 +1,4 @@
-/**
- * Shared interface types for the Airtable integration.
- * No runtime exports here — this file is types-only.
- */
 import type { ColumnType, FieldType, ScraperState, SyncStatus } from './enums.js';
-
-// ──────────────────────────────────────────────────────────────────────
-// Airtable API entities (mirrors what we persist to MongoDB)
-// ──────────────────────────────────────────────────────────────────────
-
-export interface AirtableBase {
-  baseId: string;
-  name: string;
-  permissionLevel: string;
-  syncedAt: string;
-}
-
-export interface AirtableTableField {
-  id: string;
-  name: string;
-  type: string;
-}
-
-export interface AirtableTable {
-  baseId: string;
-  tableId: string;
-  name: string;
-  primaryFieldId: string;
-  fields: AirtableTableField[];
-  syncedAt: string;
-}
-
-export interface AirtableUser {
-  userId: string;
-  email: string;
-  name: string;
-  syncedAt: string;
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// Revision history entry — schema dictated by the FSD (Part B).
-// ──────────────────────────────────────────────────────────────────────
 
 export interface RevisionHistoryEntry {
   uuid: string;
@@ -50,10 +9,6 @@ export interface RevisionHistoryEntry {
   createdDate: string;
   authoredBy: string;
 }
-
-// ──────────────────────────────────────────────────────────────────────
-// Sync run state
-// ──────────────────────────────────────────────────────────────────────
 
 export interface SyncRunSummary {
   id: string;
@@ -69,13 +24,8 @@ export interface SyncRunSummary {
 
 export type SyncStatusResponse = SyncRunSummary | { status: SyncStatus.Idle };
 
-// ──────────────────────────────────────────────────────────────────────
-// Scraper state
-// ──────────────────────────────────────────────────────────────────────
-
 export interface ScraperStateResponse {
   state: ScraperState;
-  message: string | null;
   cookiesExpireAt: string | null;
   lastError: string | null;
 }
@@ -88,10 +38,6 @@ export interface ScrapeRunStatus {
   startedAt: string | null;
   completedAt: string | null;
 }
-
-// ──────────────────────────────────────────────────────────────────────
-// Collections API (Part C)
-// ──────────────────────────────────────────────────────────────────────
 
 export interface CollectionDescriptor {
   name: string;
@@ -109,10 +55,6 @@ export interface CollectionPage<T = Record<string, unknown>> {
   page: number;
   pageSize: number;
 }
-
-// ──────────────────────────────────────────────────────────────────────
-// Auth API
-// ──────────────────────────────────────────────────────────────────────
 
 export interface OAuthStatus {
   connected: boolean;

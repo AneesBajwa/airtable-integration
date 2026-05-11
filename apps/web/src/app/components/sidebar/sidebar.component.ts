@@ -7,10 +7,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { type CollectionDescriptor } from '@airtable-integration/shared';
 
-/**
- * Collection navigation rail. Lists all synced Mongo collections with a
- * record count; clicking emits {@link entityChange}.
- */
 @Component({
   selector: 'app-sidebar',
   standalone: true,

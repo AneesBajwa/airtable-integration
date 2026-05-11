@@ -69,8 +69,6 @@ async function main(): Promise<void> {
     else if (signal) app.log.info({ signal }, 'Received shutdown signal');
     await closeAllBrowsers();
     await app.close();
-    // Give background sync/scrape runs a bounded window to flush their final state
-    // before we close the Mongo pool out from under them.
     await Promise.allSettled([
       drainActiveSync(BACKGROUND_DRAIN_MS),
       drainActiveScrape(BACKGROUND_DRAIN_MS),

@@ -7,11 +7,6 @@ import {
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
-/**
- * Slim top header: wordmark + connection status + global actions.
- * The narrow-viewport hamburger emits {@link menuToggle} so the parent can
- * show/hide the sidebar.
- */
 @Component({
   selector: 'app-header',
   standalone: true,

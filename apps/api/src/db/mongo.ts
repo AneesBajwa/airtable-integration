@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 import type { FastifyBaseLogger } from 'fastify';
 import { config } from '@/config/index.js';
 
-/** Connect Mongoose. Fails fast on initial connection so the API never serves with a half-initialized DB layer. */
 export async function connectMongo(log: FastifyBaseLogger): Promise<void> {
   mongoose.connection.on('error', (err) => log.error({ err }, 'MongoDB connection error'));
   mongoose.connection.on('disconnected', () => log.warn('MongoDB disconnected'));

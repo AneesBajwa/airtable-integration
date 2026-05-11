@@ -1,5 +1,4 @@
 <div class="grid-wrap">
-  <!-- Sub-header — search + record count, directly above the data. -->
   <div class="grid-subheader">
     <div class="search-field" [class.has-value]="!!searchDisplay()">
       <span class="search-icon" aria-hidden="true">
@@ -29,11 +28,6 @@
     <div class="grid-meta">
       <span class="meta-value tabular">{{ entityCount() | number }}</span>
       <span class="meta-label">{{ entityCount() === 1 ? 'record' : 'records' }}</span>
-      @if (useInfinite()) {
-        <span class="meta-badge" title="Server-side pagination (infinite row model)">
-          server-paged
-        </span>
-      }
       @if (loading()) {
         <span class="loading-dot" aria-hidden="true"></span>
         <span class="loading-label" aria-live="polite">Loading</span>
