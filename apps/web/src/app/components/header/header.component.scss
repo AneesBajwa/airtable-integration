@@ -96,10 +96,9 @@
 
 .status--ok  .status-dot { background: v.$success; }
 .status--off .status-dot { background: v.$fg-subtle; }
-.status--busy .status-dot {
-  background: v.$accent;
-  animation: pulse 1.2s ease-in-out infinite;
-}
+// Busy state lives in the progress strip below the header — keep the dot static
+// to avoid two competing motion sources.
+.status--busy .status-dot { background: v.$accent; }
 
 // ── Right cluster: actions ────────────────────────────────────────────
 .header-actions {

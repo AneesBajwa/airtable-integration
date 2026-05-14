@@ -1,0 +1,97 @@
+@use '../../../styles/variables' as v;
+
+:host {
+  display: block;
+  position: sticky;
+  top: v.$header-height;
+  z-index: 3;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: v.$space-3;
+  min-height: v.$subheader-height;
+  padding: v.$space-2 v.$space-4;
+  background: v.$danger-bg;
+  border-bottom: 1px solid v.$danger;
+  border-left: 3px solid v.$danger;
+  font-size: v.$font-size-md;
+  color: v.$fg;
+}
+
+.banner-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: v.$danger;
+  flex-shrink: 0;
+}
+
+.banner-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.banner-title {
+  font-weight: v.$font-weight-semibold;
+  color: v.$danger;
+}
+
+.banner-message {
+  font-size: v.$font-size-sm;
+  color: v.$fg-muted;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.banner-action {
+  flex-shrink: 0;
+  height: 30px;
+  padding: 0 v.$space-3;
+  border: 1px solid v.$danger;
+  border-radius: v.$radius-md;
+  background: v.$bg;
+  color: v.$danger;
+  font-family: inherit;
+  font-size: v.$font-size-sm;
+  font-weight: v.$font-weight-medium;
+  cursor: pointer;
+  transition:
+    background-color v.$motion-fast v.$ease-standard,
+    border-color v.$motion-fast v.$ease-standard;
+
+  &:hover  { background: v.$danger-bg; }
+  &:focus-visible { box-shadow: v.$ring; outline: none; }
+}
+
+.banner-dismiss {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: v.$radius-md;
+  background: transparent;
+  color: v.$fg-muted;
+  cursor: pointer;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover         { background: v.$overlay-hover; color: v.$fg; }
+  &:focus-visible { box-shadow: v.$ring; outline: none; }
+}
+
+@media (max-width: 600px) {
+  .banner-message { display: none; }
+}

@@ -198,6 +198,10 @@ const PROGRESS_FLUSH_EVERY = 25;
 async function doScrape(log: FastifyBaseLogger): Promise<void> {
   try {
     const session = await ensureSession(log);
+    // ensureSession may have set state to Ready via persistSession after a fresh
+    // login. Mark Scraping so the UI's progress strip stays visible through the
+    // record-fetch loop rather than collapsing back to idle.
+    await setState(ScraperState.Scraping);
     const refs = await listAllRecordRefs();
     await setProgress({ total: refs.length });
 

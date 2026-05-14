@@ -1,4 +1,4 @@
-import type { ColumnType, FieldType, ScraperState, SyncStatus } from './enums.js';
+import type { ColumnType, FieldType, ScraperState, SyncPhase, SyncStatus } from './enums.js';
 
 export interface RevisionHistoryEntry {
   uuid: string;
@@ -13,6 +13,7 @@ export interface RevisionHistoryEntry {
 export interface SyncRunSummary {
   id: string;
   status: SyncStatus;
+  phase: SyncPhase | null;
   startedAt: string;
   completedAt: string | null;
   basesProcessed: number;
@@ -59,4 +60,24 @@ export interface CollectionPage<T = Record<string, unknown>> {
 export interface OAuthStatus {
   connected: boolean;
   expiresAt: string | null;
+}
+
+export type ScrapeProgressPhase =
+  | 'acquiring'
+  | 'awaiting_mfa'
+  | 'verifying_mfa'
+  | 'scraping';
+
+/** Discriminated on `kind` — narrow before switching on `phase`. */
+export type ProgressView =
+  | { kind: 'sync'; phase: SyncPhase; current: number; total: number | null }
+  | { kind: 'scrape'; phase: ScrapeProgressPhase; current: number; total: number | null };
+
+/** Persistent inline error banner state. `action` is the primary recovery affordance. */
+export type ErrorAction = 'retry' | 'reconnect';
+
+export interface ErrorView {
+  kind: 'sync' | 'scrape';
+  message: string;
+  action: ErrorAction;
 }

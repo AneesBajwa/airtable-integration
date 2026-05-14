@@ -1,0 +1,61 @@
+@use '../../../styles/variables' as v;
+
+:host {
+  display: block;
+  position: sticky;
+  top: v.$header-height;
+  z-index: 3;
+}
+
+.strip {
+  display: flex;
+  align-items: center;
+  gap: v.$space-3;
+  height: v.$subheader-height;
+  padding: 0 v.$space-4;
+  background: v.$bg-subtle;
+  border-bottom: 1px solid v.$border;
+  font-size: v.$font-size-md;
+  color: v.$fg-muted;
+}
+
+.strip-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: v.$fg-subtle;
+  flex-shrink: 0;
+}
+
+.strip-label {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-weight: v.$font-weight-medium;
+}
+
+.strip-bar {
+  flex: 1;
+  min-width: 80px;
+
+  // Pin Material 3's bar to our accent tokens; tracks default to outline-variant.
+  --mdc-linear-progress-active-indicator-color: #{v.$accent};
+  --mdc-linear-progress-track-color: #{v.$border};
+
+  // Smooth the bar between phase jumps so it glides rather than snaps.
+  ::ng-deep .mdc-linear-progress__primary-bar {
+    transition: transform 400ms v.$ease-standard;
+  }
+}
+
+.strip-counter {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  font-size: v.$font-size-sm;
+  color: v.$fg-subtle;
+}
+
+@media (max-width: 600px) {
+  .strip-counter {
+    display: none;
+  }
+}

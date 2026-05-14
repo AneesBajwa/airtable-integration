@@ -2,18 +2,22 @@
 
 :host {
   display: grid;
-  grid-template-rows: v.$header-height 1fr;
+  grid-template-rows: v.$header-height auto auto 1fr;
   grid-template-columns: v.$sidebar-width 1fr;
   grid-template-areas:
-    'header  header'
-    'sidebar content';
+    'header   header'
+    'progress progress'
+    'error    error'
+    'sidebar  content';
   flex: 1;
   min-height: 100vh;
   background: v.$bg;
 }
 
-app-header         { grid-area: header; }
-.app-shell-sidebar { grid-area: sidebar; min-height: 0; }
+app-header           { grid-area: header; }
+.app-shell-progress  { grid-area: progress; }
+.app-shell-error     { grid-area: error; }
+.app-shell-sidebar   { grid-area: sidebar; min-height: 0; }
 
 .content {
   grid-area: content;
@@ -33,6 +37,8 @@ app-header         { grid-area: header; }
     grid-template-columns: 1fr;
     grid-template-areas:
       'header'
+      'progress'
+      'error'
       'content';
   }
   .app-shell-sidebar {

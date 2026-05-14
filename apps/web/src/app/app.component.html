@@ -9,6 +9,14 @@
   (menuToggle)="toggleSidebar()"
 />
 
+<app-progress-strip class="app-shell-progress" [view]="progressView()" />
+<app-error-banner
+  class="app-shell-error"
+  [view]="progressView() ? null : errorView()"
+  (actionClick)="onErrorAction()"
+  (dismiss)="onErrorDismiss()"
+/>
+
 <app-sidebar
   class="app-shell-sidebar"
   [collections]="collections()"

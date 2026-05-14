@@ -28,3 +28,10 @@ export enum FieldType {
   Date = 'date',
   Object = 'object',
 }
+
+export enum SyncPhase {
+  Bases = 'bases',
+  Tables = 'tables',
+  Records = 'records',
+  Users = 'users',
+}

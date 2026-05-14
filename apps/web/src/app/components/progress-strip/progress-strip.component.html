@@ -1,0 +1,10 @@
+@if (view(); as v) {
+  <div class="strip" role="status" aria-live="polite">
+    <mat-icon class="strip-icon" aria-hidden="true">{{ icon() }}</mat-icon>
+    <span class="strip-label">{{ label() }}</span>
+    <mat-progress-bar class="strip-bar" mode="determinate" [value]="percent()" />
+    @if (counter(); as c) {
+      <span class="strip-counter">{{ c }}</span>
+    }
+  </div>
+}

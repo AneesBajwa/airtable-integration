@@ -12,7 +12,11 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval, firstValueFrom } from 'rxjs';
 import {
+  computeProgressView,
   type CollectionDescriptor,
+  type ErrorView,
+  type ProgressView,
+  type ScrapeRunStatus,
   ScraperState,
   SyncStatus,
   type SyncStatusResponse,
@@ -23,6 +27,8 @@ import { SidebarComponent } from '@/components/sidebar/sidebar.component';
 import { EmptyStateComponent } from '@/components/empty-state/empty-state.component';
 import { MfaPromptComponent } from '@/components/mfa-prompt/mfa-prompt.component';
 import { DataGridComponent } from '@/components/data-grid/data-grid.component';
+import { ProgressStripComponent } from '@/components/progress-strip/progress-strip.component';
+import { ErrorBannerComponent } from '@/components/error-banner/error-banner.component';
 
 const POLL_MS = 2000;
 const RECONNECT_REQUIRED = 'reconnect_required';
@@ -37,6 +43,8 @@ const RECONNECT_REQUIRED = 'reconnect_required';
     EmptyStateComponent,
     MfaPromptComponent,
     DataGridComponent,
+    ProgressStripComponent,
+    ErrorBannerComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app.component.html',
@@ -57,6 +65,17 @@ export class AppComponent implements OnInit {
   readonly scraping = signal<boolean>(false);
   readonly scraperState = signal<ScraperState>(ScraperState.Idle);
 
+  /** Last polled sync + scrape payloads — drive the progress strip's view-model. */
+  readonly syncStatus = signal<SyncStatusResponse | null>(null);
+  readonly scrapeStatus = signal<ScrapeRunStatus>({
+    state: ScraperState.Idle,
+    total: 0,
+    processed: 0,
+    failed: 0,
+    startedAt: null,
+    completedAt: null,
+  });
+
   readonly reloadKey = signal<number>(0);
   readonly sidebarOpen = signal<boolean>(false);
   readonly mfaSubmitting = signal<boolean>(false);
@@ -68,6 +87,14 @@ export class AppComponent implements OnInit {
     if (!e) return 0;
     return this.collections().find((c) => c.name === e)?.count ?? 0;
   });
+
+  /** Single view-model for the progress strip; null collapses it. */
+  readonly progressView = computed<ProgressView | null>(() =>
+    computeProgressView(this.syncStatus(), this.scrapeStatus(), this.scraperState()),
+  );
+
+  /** Persistent error banner state. Cleared on retry/dismiss or when a new op starts. */
+  readonly errorView = signal<ErrorView | null>(null);
 
   private syncStatusInFlight = false;
   private scrapeStatusInFlight = false;
@@ -109,6 +136,7 @@ export class AppComponent implements OnInit {
 
   async onSync(): Promise<void> {
     if (this.syncing()) return;
+    this.errorView.set(null);
     this.syncing.set(true);
     try {
       await firstValueFrom(this.api.startSync());
@@ -120,6 +148,7 @@ export class AppComponent implements OnInit {
 
   async onScrape(): Promise<void> {
     if (this.scraping()) return;
+    this.errorView.set(null);
     this.scraping.set(true);
     try {
       await firstValueFrom(this.api.startScrape());
@@ -132,6 +161,21 @@ export class AppComponent implements OnInit {
       }
     }
     void this.refreshScrapeStatus();
+  }
+
+  onErrorAction(): void {
+    const view = this.errorView();
+    if (!view) return;
+    if (view.action === 'reconnect') {
+      void this.onConnect();
+      return;
+    }
+    if (view.kind === 'sync') void this.onSync();
+    else void this.onScrape();
+  }
+
+  onErrorDismiss(): void {
+    this.errorView.set(null);
   }
 
   async onMfaSubmit(code: string): Promise<void> {
@@ -183,6 +227,7 @@ export class AppComponent implements OnInit {
     this.syncStatusInFlight = true;
     try {
       const status: SyncStatusResponse = await firstValueFrom(this.api.getSyncStatus());
+      this.syncStatus.set(status);
       switch (status.status) {
         case SyncStatus.Idle:
           this.syncing.set(false);
@@ -201,9 +246,14 @@ export class AppComponent implements OnInit {
           this.syncing.set(false);
           const msg = status.error ?? 'Sync failed';
           if (msg.startsWith(RECONNECT_REQUIRED)) {
-            this.promptReconnect();
+            this.connected.set(false);
+            this.errorView.set({
+              kind: 'sync',
+              message: 'Airtable connection expired. Reconnect to continue.',
+              action: 'reconnect',
+            });
           } else {
-            this.snack.open(`Sync failed: ${msg}`, 'Dismiss', { duration: 8000 });
+            this.errorView.set({ kind: 'sync', message: msg, action: 'retry' });
           }
           return;
         }
@@ -223,6 +273,7 @@ export class AppComponent implements OnInit {
         firstValueFrom(this.api.getScrapeStatus()),
         firstValueFrom(this.api.getScraperState()),
       ]);
+      this.scrapeStatus.set(run);
       this.scraperState.set(state.state);
 
       // A run is in flight while `startedAt` is set but `completedAt` is not.
@@ -235,8 +286,14 @@ export class AppComponent implements OnInit {
 
       if (this.scraping() && run.completedAt) {
         if (run.state === ScraperState.Failed) {
-          this.snack.open(`Scrape failed: ${state.lastError ?? 'unknown'}`, 'Dismiss', {
-            duration: 8000,
+          const reason = state.lastError ?? 'unknown';
+          const isAuth = reason.startsWith('auth_expired');
+          this.errorView.set({
+            kind: 'scrape',
+            message: isAuth
+              ? 'Airtable session expired. Sign in again to scrape history.'
+              : reason,
+            action: 'retry',
           });
         } else {
           this.snack.open(
@@ -266,11 +323,11 @@ export class AppComponent implements OnInit {
 
   private promptReconnect(): void {
     this.connected.set(false);
-    this.snack
-      .open('Airtable connection expired — please reconnect', 'Reconnect', { duration: 8000 })
-      .onAction()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.onConnect());
+    this.errorView.set({
+      kind: 'sync',
+      message: 'Airtable connection expired. Reconnect to continue.',
+      action: 'reconnect',
+    });
   }
 
   private handleHttpError(err: unknown): void {

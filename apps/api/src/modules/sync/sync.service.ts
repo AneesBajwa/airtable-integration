@@ -1,6 +1,6 @@
 import type { FastifyBaseLogger } from 'fastify';
 import pLimit from 'p-limit';
-import { SyncStatus, type SyncRunSummary } from '@airtable-integration/shared';
+import { SyncPhase, SyncStatus, type SyncRunSummary } from '@airtable-integration/shared';
 import {
   AirtableBase,
   AirtableTable,
@@ -71,7 +71,14 @@ async function doRun(runId: string, log: FastifyBaseLogger): Promise<void> {
   const persistCounters = (): Promise<unknown> =>
     SyncRun.findByIdAndUpdate(runId, { $set: counters });
 
+  let currentPhase: SyncPhase = SyncPhase.Bases;
+  const persistPhase = async (next: SyncPhase): Promise<void> => {
+    currentPhase = next;
+    await SyncRun.findByIdAndUpdate(runId, { $set: { phase: next } });
+  };
+
   try {
+    await persistPhase(SyncPhase.Bases);
     const bases = await airtable.listBases();
     for (const b of bases) {
       await AirtableBase.findOneAndUpdate(
@@ -90,7 +97,9 @@ async function doRun(runId: string, log: FastifyBaseLogger): Promise<void> {
     counters.basesProcessed = bases.length;
     await persistCounters();
 
+    await persistPhase(SyncPhase.Tables);
     const tableLimit = pLimit(TABLE_CONCURRENCY);
+    let recordsPhaseEntered = false;
     for (const b of bases) {
       const tables = await airtable.listTables(b.id);
       for (const t of tables) {
@@ -112,6 +121,11 @@ async function doRun(runId: string, log: FastifyBaseLogger): Promise<void> {
       }
       await persistCounters();
 
+      if (!recordsPhaseEntered) {
+        await persistPhase(SyncPhase.Records);
+        recordsPhaseEntered = true;
+      }
+
       await Promise.all(
         tables.map((t) =>
           tableLimit(async () => {
@@ -132,6 +146,7 @@ async function doRun(runId: string, log: FastifyBaseLogger): Promise<void> {
       );
     }
 
+    await persistPhase(SyncPhase.Users);
     const users = await airtable.listUsers();
     for (const u of users) {
       await AirtableUser.findOneAndUpdate(
@@ -152,7 +167,7 @@ async function doRun(runId: string, log: FastifyBaseLogger): Promise<void> {
     await SyncRun.findByIdAndUpdate(runId, {
       $set: { ...counters, status: SyncStatus.Success, completedAt: new Date() },
     });
-    log.info({ runId, counters }, 'Sync completed');
+    log.info({ runId, counters, phase: currentPhase }, 'Sync completed');
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     const reconnect = err instanceof ReconnectRequiredError;
@@ -164,7 +179,7 @@ async function doRun(runId: string, log: FastifyBaseLogger): Promise<void> {
         error: reconnect ? `reconnect_required: ${message}` : message,
       },
     });
-    log.error({ runId, err }, 'Sync failed');
+    log.error({ runId, err, phase: currentPhase }, 'Sync failed');
   }
 }
 
@@ -175,6 +190,7 @@ export async function getSyncStatus(): Promise<SyncRunSummary | null> {
   return {
     id: String(latest._id),
     status: latest.status,
+    phase: latest.phase ?? null,
     startedAt: latest.startedAt.toISOString(),
     completedAt: latest.completedAt?.toISOString() ?? null,
     basesProcessed: latest.basesProcessed,

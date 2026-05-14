@@ -1,8 +1,9 @@
 import { Schema, model, type Model } from 'mongoose';
-import { SyncStatus } from '@airtable-integration/shared';
+import { SyncPhase, SyncStatus } from '@airtable-integration/shared';
 
 export interface ISyncRun {
   status: SyncStatus;
+  phase: SyncPhase | null;
   startedAt: Date;
   completedAt: Date | null;
   basesProcessed: number;
@@ -21,6 +22,11 @@ const SyncRunSchema = new Schema<ISyncRun>(
       enum: Object.values(SyncStatus),
       default: SyncStatus.Pending,
       index: true,
+    },
+    phase: {
+      type: String,
+      enum: Object.values(SyncPhase),
+      default: null,
     },
     startedAt: { type: Date, default: () => new Date() },
     completedAt: { type: Date, default: null },

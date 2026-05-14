@@ -1,0 +1,24 @@
+@if (view(); as v) {
+  <div class="banner" role="alert">
+    <mat-icon class="banner-icon" aria-hidden="true">error_outline</mat-icon>
+    <div class="banner-copy">
+      <span class="banner-title">{{ title() }}</span>
+      <span class="banner-message">{{ v.message }}</span>
+    </div>
+    <button
+      type="button"
+      class="banner-action"
+      (click)="actionClick.emit()"
+    >
+      {{ actionLabel() }}
+    </button>
+    <button
+      type="button"
+      class="banner-dismiss"
+      aria-label="Dismiss"
+      (click)="dismiss.emit()"
+    >
+      <mat-icon aria-hidden="true">close</mat-icon>
+    </button>
+  </div>
+}

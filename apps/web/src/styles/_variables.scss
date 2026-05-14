@@ -71,10 +71,14 @@ $accent-soft:  rgba(24, 24, 27, 0.08);
 // ── Status ─────────────────────────────────────────────────────────────
 $success:        #15803d; // 4.83:1 AA
 $danger:         #b91c1c; // 7.18:1 AAA
+$danger-bg:      #fef2f2; // surface for inline error banners
 $warning:        #b45309; // 5.95:1 AA
 $warning-bg:     #fffbeb;
 $warning-border: #fde68a;
 $warning-accent: #d97706; // decorative border-left only
+
+// Subtle hover backdrop on transparent buttons.
+$overlay-hover:  rgba(0, 0, 0, 0.05);
 
 // ── Focus ──────────────────────────────────────────────────────────────
 $ring-color: rgba(10, 10, 10, 0.4);
